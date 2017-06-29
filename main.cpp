@@ -57,6 +57,14 @@ void drawLine_DDA(SDL_Renderer *gRenderer,float x1,float y1,float x2,float y2,Ui
         y1+=dy;
     }
 }
+void drawTriangleLine(SDL_Renderer *gRenderer,int point1_x, int point1_y, int point2_x,int point2_y,int point3_x,int point3_y,Uint8 R,Uint8 G,Uint8 B,Uint8 A)
+{
+    //绘制线框三角形
+    drawLine_DDA(gRenderer,point1_x,point1_y,point2_x,point2_y,R,G,B,A);
+    drawLine_DDA(gRenderer,point2_x,point2_y,point3_x,point3_y,R,G,B,A);
+    drawLine_DDA(gRenderer,point3_x,point3_y,point1_x,point1_y,R,G,B,A);
+}
+
 void loop()
 {
     bool quit = false;
@@ -75,7 +83,9 @@ void loop()
         //Clear the entire screen to our selected color
         SDL_RenderClear(gRenderer);
 
-        drawLine_DDA(gRenderer,0,0,baseWindow_w,baseWindow_h,255,255,0,0xff);
+        int point1_x = 200, point1_y = 200, point2_x = 100,point2_y = 500,point3_x = 700,point3_y =400;
+        drawTriangleLine(gRenderer,point1_x,point1_y,point2_x,point2_y,point3_x,point3_y,255,255,0,0xff);
+
 
         //Use this function to update the screen with any rendering performed since the previous cal
         SDL_RenderPresent(gRenderer);
