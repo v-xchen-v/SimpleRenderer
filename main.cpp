@@ -1,5 +1,6 @@
 #include "../SDL/include/SDL.h"     //添加SDL头文件
 #include "stdio.h"
+#include "math.h"
 #undef main                         //SDL中的SDL_main.h已经定义了main
 
 const int baseWindow_w = 800;
@@ -30,6 +31,32 @@ int init()
         return false;
     }
 }
+void drawPoint(SDL_Renderer *gRenderer,int col,int row,Uint8 R,float G,Uint8 B,Uint8 A)
+{
+    // 设置颜色
+    SDL_SetRenderDrawColor(gRenderer, R, G, B, A);
+    // 画点
+    SDL_RenderDrawPoint(gRenderer, col,row);
+}
+void drawLine_DDA(SDL_Renderer *gRenderer,float x1,float y1,float x2,float y2,Uint8 R,float G,Uint8 B,Uint8 A)
+{
+    float dm = 0,dx = 0,dy = 0;
+    if(fabs(x2-x1) >= fabs(y2-y1))
+    {
+        dm = fabs(x2-x1);
+    }else
+    {
+        dm = fabs(y2-y1);
+    }
+    dx = (float)(x2-x1)/(dm);
+    dy = (float)(y2-y1)/(dm);
+    for(float i=0;i<dm;i++)
+    {
+        drawPoint(gRenderer,x1,y1,R,G,B,A);
+        x1+=dx;
+        y1+=dy;
+    }
+}
 void loop()
 {
     bool quit = false;
@@ -48,19 +75,8 @@ void loop()
         //Clear the entire screen to our selected color
         SDL_RenderClear(gRenderer);
 
-        //在随机位置上画随机颜色的1000个点
-        for(int i=0;i<1000;i++)
-        {
-            int r = rand()/100 % 256;
-            int g = rand() / 100 % 256;
-            int b = rand() / 100 % 256;
-            int col = rand() % baseWindow_w;
-            int row = rand() % baseWindow_h;
-            // 设置颜色
-            SDL_SetRenderDrawColor(gRenderer, (Uint8)r, (Uint8)g, (Uint8)b, 0xff);
-            // 画点
-            SDL_RenderDrawPoint(gRenderer, col,row);
-        }
+        drawLine_DDA(gRenderer,0,0,baseWindow_w,baseWindow_h,255,255,0,0xff);
+
         //Use this function to update the screen with any rendering performed since the previous cal
         SDL_RenderPresent(gRenderer);
     }
